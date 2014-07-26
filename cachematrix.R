@@ -52,7 +52,7 @@ makeCacheMatrix <- function(data = matrix()) {
 
 
 ## Lazily compute and store the inverse of a matrix inside the container created
-## by cacheMatrix.
+## by makeCacheMatrix.
 ##
 ## No error handling implemented is implemented here.
 ## It's expected that the first argument is an object returned by
@@ -86,7 +86,7 @@ test <- function() {
     stop()
   }
 
-  # testcase: CacheMatrix constructed without default value
+  # testcase: CacheMatrix constructed with default value
   cm <- makeCacheMatrix()
   expected <- solve(matrix())
   actual <- cacheSolve(cm)
@@ -101,7 +101,6 @@ test <- function() {
   if(!identical(expected, actual)) {
     stop()
   }
-
   cm$set(hilbert(6))
   expected <- solve(hilbert(6))
   actual <- cacheSolve(cm)
@@ -109,15 +108,8 @@ test <- function() {
     stop()
   }
 
-  cacheSolve(cm)
-  x <- NULL
-  expected <- solve(hilbert(10))
-  actual <- solve(hilbert(10))
-  if(!identical(expected, actual)) {
-    stop("error in calculation")
-  }
-
   print("all functional tests ran OK")
+
   print("run timing for original solver")
   m <- hilbert(9)
   t <- c()
@@ -125,7 +117,7 @@ test <- function() {
     t <- c(t, system.time(for(i in 1:10000) x <- solve(m))["elapsed"])
   }
 
-  print("run timing for cached solver")
+  print("run timing for caching solver")
   cm <- makeCacheMatrix(hilbert(9))
   ct <- c()
   for(j in 1:3) {
